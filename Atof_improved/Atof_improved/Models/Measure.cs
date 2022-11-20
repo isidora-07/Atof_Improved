@@ -35,36 +35,43 @@ namespace Atof_improved.Models
         }
         [Name("Komentar")]
         public string Comment { get; set; }
+        private int LineNumber;
 
-        private DateTime Date;
-        private double Result;
+        public DateTime Date;
+        public double Result;
+        private string Error;
+        public string getError()
+        {
+            return this.Error;
+        }
 
-        public void FormateDate()
+        private void FormateDate()
         {
             string[] validFormats = { 
-                "dd/mm/yyyy",
-                "d/mm/yyyy",
-                "d/m/yyyy",
-                "dd/m/yyyy",
+                "dd/MM/yyyy",
+                "d/MM/yyyy",
+                "d/M/yyyy",
+                "dd/M/yyyy",
 
-                "dd.mm.yyyy", 
-                "d.mm.yyyy",
-                "d.m.yyyy",
-                "dd.m.yyyy",
+                "dd.MM.yyyy", 
+                "d.MM.yyyy",
+                "d.M.yyyy",
+                "dd.M.yyyy",
 
-                "dd.mm.yyyy.",
-                "d.mm.yyyy.",
-                "d.m.yyyy.",
-                "dd.m.yyyy.",
+                "dd.MM.yyyy.",
+                "d.MM.yyyy.",
+                "d.M.yyyy.",
+                "dd.M.yyyy.",
             };
             if(!DateTime.TryParseExact(this.CsvDate, validFormats, CultureInfo.CurrentCulture, DateTimeStyles.None, out this.Date))
             {
                 // to do...
+                this.Error = "Losa godina";
             }
 
         }
 
-        public void FormateResult()
+        private void FormateResult()
         {
             if (this.CsvResult.Contains("E+") || this.CsvResult.Contains("e+"))
             {
@@ -85,7 +92,10 @@ namespace Atof_improved.Models
                 this.Result = baseValue * Math.Pow(10, exponentValue);
             } else
             {
-                Double.TryParse(this.CsvResult, out this.Result);
+                if(!Double.TryParse(this.CsvResult, out this.Result)){
+                    // to do...
+                    this.Error = "Los rezultat";
+                }
             }
         }
     }

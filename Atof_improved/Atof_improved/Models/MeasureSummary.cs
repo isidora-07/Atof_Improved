@@ -14,9 +14,9 @@ namespace Atof_improved.Models
         [Name("Godine")]
         public int Year { get; set; }
         [Name("UkupnoMerenja")]
-        public int TotalSum { get;  set; }
+        public double Count { get;  set; }
         [Name("Suma")]
-        public double Sum { get; set; }
+        public double TotalSum { get; set; }
 
     }
 }

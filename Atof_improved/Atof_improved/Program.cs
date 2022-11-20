@@ -12,8 +12,32 @@ namespace Atof_improved
     {
         static void Main(string[] args)
         {
-            List<Measure> merenja = new List<Measure>();
-            merenja = FileHelper.ReadFile<Measure>("../../../Tests/input.csv");
+            List<Measure> measures = new List<Measure>();
+            measures = FileHelper.ReadFile<Measure>("../../../Tests/input.csv");
+
+            var sortedMonth = measures.OrderBy(x => x.Date).ToList();
+            var sorted = sortedMonth.OrderBy(x => x.Date.Year)
+                .Where(x => String.IsNullOrEmpty(x.getError())).ToList();
+
+            var previousMonth = 0;
+            var previousYear = 0;
+            List<MeasureSummary> summaries = new List<MeasureSummary>();
+            foreach (var measure in sorted)
+            {
+                if (measure.Date.Month != previousMonth || measure.Date.Year != previousYear)
+                {
+                    MeasureSummary summary = new MeasureSummary();
+                    summary.Month = measure.Date.ToString("MMM");
+                    summary.Year = measure.Date.Year;
+                    summary.TotalSum = measure.Result;
+                    summary.Count = 1;
+                    summaries.Add(summary);
+                }
+                summaries.Last().TotalSum += measure.Result;
+                summaries.Last().Count++;
+                previousMonth = measure.Date.Month;
+                previousYear = measure.Date.Year;
+            }
         }
     }
 }
