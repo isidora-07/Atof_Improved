@@ -21,11 +21,23 @@ namespace Atof_improved.Models
                 this.FormateDate();
             }
         }
+
+        private string _CsvResult;
         [Name("Rezultat")]
-        public string Result { get; set; }
+        public string CsvResult
+        {
+            get { return _CsvResult; }
+            set 
+            {
+                _CsvResult = value;
+                this.FormateResult();
+            }
+        }
         [Name("Komentar")]
         public string Comment { get; set; }
+
         private DateTime Date;
+        private double Result;
 
         public void FormateDate()
         {
@@ -50,6 +62,31 @@ namespace Atof_improved.Models
                 // to do...
             }
 
+        }
+
+        public void FormateResult()
+        {
+            if (this.CsvResult.Contains("E+") || this.CsvResult.Contains("e+"))
+            {
+                string[] separator = new string[1];
+                if (this.CsvResult.Contains("E+"))
+                {
+                    separator[0] = "E+";
+                } else
+                {
+                    separator[0] = "e+";
+                }
+                 
+                var value = CsvResult.Split(separator, StringSplitOptions.None);
+
+                double baseValue = Convert.ToDouble(value[0]);
+                double exponentValue = Convert.ToDouble(value[1]);
+
+                this.Result = baseValue * Math.Pow(10, exponentValue);
+            } else
+            {
+                Double.TryParse(this.CsvResult, out this.Result);
+            }
         }
     }
 }
