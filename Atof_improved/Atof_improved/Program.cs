@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Atof_improved.Helpers;
+using Atof_improved.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +12,8 @@ namespace Atof_improved
     {
         static void Main(string[] args)
         {
+            List<Measure> merenja = new List<Measure>();
+            merenja = FileHelper.ReadFile<Measure>("../../../Tests/input.csv");
         }
     }
 }
