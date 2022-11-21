@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ namespace Atof_improved.Models
 {
     public class Measure
     {
+        private static int Index = 1;
         private string _CsvDate;
         [Name("Datum")]
         public string CsvDate 
@@ -33,27 +35,28 @@ namespace Atof_improved.Models
                 this.FormateResult();
             }
         }
+
         [Name("Komentar")]
         public string Comment { get; set; }
-        private int LineNumber;
 
         public DateTime Date;
         public double Result;
-        private string Error;
-        public string getError()
-        {
-            return this.Error;
-        }
+        public bool HasError;
+        private int LineNumber;
 
+        public Measure()
+        {
+            this.LineNumber = Index++;
+        }
         private void FormateDate()
         {
-            string[] validFormats = { 
+            string[] validFormats = {
                 "dd/MM/yyyy",
                 "d/MM/yyyy",
                 "d/M/yyyy",
                 "dd/M/yyyy",
 
-                "dd.MM.yyyy", 
+                "dd.MM.yyyy",
                 "d.MM.yyyy",
                 "d.M.yyyy",
                 "dd.M.yyyy",
@@ -63,10 +66,10 @@ namespace Atof_improved.Models
                 "d.M.yyyy.",
                 "dd.M.yyyy.",
             };
-            if(!DateTime.TryParseExact(this.CsvDate, validFormats, CultureInfo.CurrentCulture, DateTimeStyles.None, out this.Date))
+
+            if (!DateTime.TryParseExact(this.CsvDate, validFormats, CultureInfo.CurrentCulture, DateTimeStyles.None, out this.Date))
             {
-                // to do...
-                this.Error = "Losa godina";
+                this.HasError = true;
             }
 
         }
@@ -86,15 +89,23 @@ namespace Atof_improved.Models
                  
                 var value = CsvResult.Split(separator, StringSplitOptions.None);
 
+                if(value.Length != 2)
+                {
+                    HasError = true;
+                    return;
+                }
+
                 double baseValue = Convert.ToDouble(value[0]);
                 double exponentValue = Convert.ToDouble(value[1]);
+
 
                 this.Result = baseValue * Math.Pow(10, exponentValue);
             } else
             {
-                if(!Double.TryParse(this.CsvResult, out this.Result)){
-                    // to do...
-                    this.Error = "Los rezultat";
+                if(!Double.TryParse(this.CsvResult, out this.Result))
+                {
+                    Console.WriteLine($"Line {this.LineNumber} cannot be converted into a number. Original value { this.CsvResult }, date { this.Date.ToShortDateString()}");
+                    this.HasError = true;
                 }
             }
         }

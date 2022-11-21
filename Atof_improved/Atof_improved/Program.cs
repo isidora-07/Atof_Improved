@@ -15,14 +15,13 @@ namespace Atof_improved
             List<Measure> measures = new List<Measure>();
             measures = FileHelper.ReadFile<Measure>("../../../Tests/input.csv");
 
-            var sortedMonth = measures.OrderBy(x => x.Date).ToList();
-            var sorted = sortedMonth.OrderBy(x => x.Date.Year)
-                .Where(x => String.IsNullOrEmpty(x.getError())).ToList();
+            measures = measures.OrderBy(x => x.Date.Month).OrderBy(x => x.Date.Year)
+                .Where(x => x.HasError == false).ToList();
 
             var previousMonth = 0;
             var previousYear = 0;
             List<MeasureSummary> summaries = new List<MeasureSummary>();
-            foreach (var measure in sorted)
+            foreach (var measure in measures)
             {
                 if (measure.Date.Month != previousMonth || measure.Date.Year != previousYear)
                 {
@@ -32,12 +31,27 @@ namespace Atof_improved
                     summary.TotalSum = measure.Result;
                     summary.Count = 1;
                     summaries.Add(summary);
+                } else
+                {
+                    summaries.Last().TotalSum += measure.Result;
+                    summaries.Last().Count++;
                 }
-                summaries.Last().TotalSum += measure.Result;
-                summaries.Last().Count++;
                 previousMonth = measure.Date.Month;
                 previousYear = measure.Date.Year;
             }
+
+            FileHelper.PrintOutput(summaries);
+            foreach (var measure in measures)
+            {
+                Console.WriteLine(measure.Date.ToShortDateString());
+            }
+
+            foreach(var summary in summaries)
+            {
+                Console.WriteLine(summary.Month + " " + summary.Year + " " + summary.TotalSum + " " + summary.Count);
+            }
+
         }
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using CsvHelper;
+﻿using Atof_improved.Models;
+using CsvHelper;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -20,6 +21,11 @@ namespace Atof_improved.Helpers
                 records = csv.GetRecords<T>().ToList();
             }
             return records;
+        }
+
+        public static void PrintOutput<T>(List<T> list)
+        {
+
         }
     }
 }
