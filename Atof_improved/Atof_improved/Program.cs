@@ -40,7 +40,6 @@ namespace Atof_improved
                 previousYear = measure.Date.Year;
             }
 
-            FileHelper.PrintOutput(summaries);
             foreach (var measure in measures)
             {
                 Console.WriteLine(measure.Date.ToShortDateString());

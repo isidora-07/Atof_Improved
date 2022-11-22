@@ -27,5 +27,21 @@ namespace Atof_improved.Helpers
         {
 
         }
+
+        public static void ErrorLogging(Exception e)
+        {
+            string strPath = "../../../output.err";
+            if (!File.Exists(strPath))
+            {
+                File.Create(strPath).Dispose();
+            }
+
+            using (StreamWriter sw = File.AppendText(strPath))
+            {
+                sw.WriteLine(e.Message);
+            }
+
+        }
+
     }
 }
