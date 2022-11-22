@@ -12,6 +12,7 @@ namespace Atof_improved.Helpers
 {
     public class FileHelper
     {
+        private static bool FirstTimeErrorLogging = true;
         public static List<T> ReadFile<T>(string filePath)
         {
             List<T> records = new List<T>();
@@ -22,25 +23,46 @@ namespace Atof_improved.Helpers
             }
             return records;
         }
-
-        public static void PrintOutput<T>(List<T> list)
-        {
-
-        }
-
         public static void ErrorLogging(Exception e)
         {
-            string strPath = "../../../output.err";
-            if (!File.Exists(strPath))
+            string filePath = "../../../output.err";
+            if(FirstTimeErrorLogging)
             {
-                File.Create(strPath).Dispose();
+                File.WriteAllText(filePath, string.Empty);
+                FirstTimeErrorLogging = false;
             }
 
-            using (StreamWriter sw = File.AppendText(strPath))
+            if (!File.Exists(filePath))
             {
-                sw.WriteLine(e.Message);
+                File.Create(filePath).Dispose();
             }
 
+            using (StreamWriter stream = File.AppendText(filePath))
+            {
+                stream.WriteLine(e.Message);
+            }
+        }
+
+        public static void PrintOutput(List<MeasureSummary> summaries)
+        {
+            string filePath = "../../../output.csv";
+            File.WriteAllText(filePath, string.Empty);
+
+            if (!File.Exists(filePath))
+            {
+                File.Create(filePath).Dispose();
+            }
+
+            string header = "Mesec, Godina, Ukupno merenja, Suma";
+            File.WriteAllText(filePath, header + Environment.NewLine);
+
+            using (StreamWriter stream = File.AppendText(filePath))
+            {
+                foreach(var summary in summaries)
+                {
+                    stream.WriteLine(summary.Month + ", " + summary.Year + ", " + summary.Count + ", " + summary.TotalSum);
+                }
+            }
         }
 
     }

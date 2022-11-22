@@ -21,6 +21,7 @@ namespace Atof_improved
             var previousMonth = 0;
             var previousYear = 0;
             List<MeasureSummary> summaries = new List<MeasureSummary>();
+
             foreach (var measure in measures)
             {
                 if (measure.Date.Month != previousMonth || measure.Date.Year != previousYear)
@@ -40,16 +41,7 @@ namespace Atof_improved
                 previousYear = measure.Date.Year;
             }
 
-            foreach (var measure in measures)
-            {
-                Console.WriteLine(measure.Date.ToShortDateString());
-            }
-
-            foreach(var summary in summaries)
-            {
-                Console.WriteLine(summary.Month + " " + summary.Year + " " + summary.TotalSum + " " + summary.Count);
-            }
-
+            FileHelper.PrintOutput(summaries);
         }
 
     }

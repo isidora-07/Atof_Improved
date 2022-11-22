@@ -18,5 +18,10 @@ namespace Atof_improved.Models
         [Name("Suma")]
         public double TotalSum { get; set; }
 
+        public override string ToString()
+        {
+            return Month + ", " + Year + ", " + Count + ", " + TotalSum;
+        }
+
     }
 }

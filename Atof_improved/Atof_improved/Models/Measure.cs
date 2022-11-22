@@ -1,12 +1,7 @@
 ﻿using Atof_improved.Helpers;
 using CsvHelper.Configuration.Attributes;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Atof_improved.Models
 {
@@ -33,7 +28,14 @@ namespace Atof_improved.Models
             set
             {
                 _CsvResult = value;
-                this.FormateResult();
+                try
+                {
+                    this.FormateResult();
+                } 
+                catch (Exception e)
+                {
+                    FileHelper.ErrorLogging(e);
+                }
             }
         }
 
@@ -89,37 +91,26 @@ namespace Atof_improved.Models
                 }
 
                 var value = CsvResult.Split(separator, StringSplitOptions.None);
-
-                bool result = value[0].Any(x => char.IsLetter(x));
-                if (result)
+                double baseValue;
+                double exponentValue;
+                try
                 {
-                    try
-                    {
-                        throw new Exception($"Line {this.LineNumber} cannot be converted into a number. Original value {this.CsvResult}, date {this.Date.ToShortDateString()}");
-                    }
-                    catch (Exception e)
-                    {
-                        FileHelper.ErrorLogging(e);
-                        return;
-                    }
+                    baseValue = Convert.ToDouble(value[0]);
+                    exponentValue = Convert.ToDouble(value[1]);
+                } 
+                catch(Exception e)
+                {
+                    this.HasError = true;
+                    throw new Exception($"Line {this.LineNumber} cannot be converted into a number. Original value {this.CsvResult}, date {this.Date.ToShortDateString()}");
                 }
-
-                double baseValue = Convert.ToDouble(value[0]);
-                double exponentValue = Convert.ToDouble(value[1]);
                 Result = baseValue * Math.Pow(10, exponentValue);
 
             } else
             {
-                try
+                if (!(Double.TryParse(this.CsvResult, out this.Result)))
                 {
-                    if (!(Double.TryParse(this.CsvResult, out this.Result)))
-                    {
-                        throw new Exception($"Line {this.LineNumber} cannot be converted into a number. Original value {this.CsvResult}, date {this.Date.ToShortDateString()}");
-                    }
-                }
-                catch (Exception e)
-                {
-                    FileHelper.ErrorLogging(e);
+                    this.HasError = true;
+                    throw new Exception($"Line {this.LineNumber} cannot be converted into a number. Original value {this.CsvResult}, date {this.Date.ToShortDateString()}");
                 }
             }
         }
