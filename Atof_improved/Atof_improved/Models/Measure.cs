@@ -79,40 +79,15 @@ namespace Atof_improved.Models
 
         private void FormateResult()
         {
-            if (this.CsvResult.Contains("E+") || this.CsvResult.Contains("e+"))
+            try
             {
-                string[] separator = new string[1];
-                if (this.CsvResult.Contains("E+"))
-                {
-                    separator[0] = "E+";
-                } else
-                {
-                    separator[0] = "e+";
-                }
-
-                var value = CsvResult.Split(separator, StringSplitOptions.None);
-                double baseValue;
-                double exponentValue;
-                try
-                {
-                    baseValue = Convert.ToDouble(value[0]);
-                    exponentValue = Convert.ToDouble(value[1]);
-                } 
-                catch(Exception e)
-                {
-                    this.HasError = true;
-                    throw new Exception($"Line {this.LineNumber} cannot be converted into a number. Original value {this.CsvResult}, date {this.Date.ToShortDateString()}");
-                }
-                Result = baseValue * Math.Pow(10, exponentValue);
-
-            } else
+                this.Result = CustomConvert.AtofImproved(this.CsvResult);
+            } catch(Exception e)
             {
-                if (!(Double.TryParse(this.CsvResult, out this.Result)))
-                {
-                    this.HasError = true;
-                    throw new Exception($"Line {this.LineNumber} cannot be converted into a number. Original value {this.CsvResult}, date {this.Date.ToShortDateString()}");
-                }
+                this.HasError= true;
+                throw new Exception($"Line {this.LineNumber} cannot be converted into a number. Original value {this.CsvResult}, date {this.Date.ToShortDateString()}");
             }
+
         }
 
     }

@@ -68,6 +68,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers\CustomConvert.cs" />
     <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="Models\MeasureSummary.cs" />
     <Compile Include="Models\Measure.cs" />
